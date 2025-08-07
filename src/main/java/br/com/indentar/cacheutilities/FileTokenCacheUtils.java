@@ -34,6 +34,10 @@ public class FileTokenCacheUtils {
 
     }
 
+    public static void saveTokenModel(String key, String folderTokens, TokenModel token) throws IOException {
+        saveToken(key, folderTokens, token);
+    }
+
     /**
      * user.home/pastaTokens/chave.json
      *
