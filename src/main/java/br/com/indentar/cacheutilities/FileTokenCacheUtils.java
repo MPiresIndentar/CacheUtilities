@@ -34,6 +34,18 @@ public class FileTokenCacheUtils {
 
     }
 
+    public static void saveToken(String key, String folderTokens, String jsonToken) throws IOException {
+        Executors.newSingleThreadExecutor().submit(() -> {
+            try {
+                File createFileToken = createFileToken(key, folderTokens);
+                FileUtils.write(createFileToken, jsonToken, "UTF-8");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+
+    }
+
     public static void saveTokenModel(String key, String folderTokens, TokenModel token) throws IOException {
         saveToken(key, folderTokens, token);
     }
@@ -68,8 +80,22 @@ public class FileTokenCacheUtils {
             File fileToken = createFileToken(key, folderTokens);
             if (fileToken.exists()) {
                 String jsonToken = FileUtils.readFileToString(fileToken, "UTF-8");
-                T token = JsonSimpleUtil.toObject(jsonToken, clazz);
+                T token = (T) JsonSimpleUtil.toObject(jsonToken, clazz);
                 return token;
+            }
+            return null;
+        } catch (IOException ex) {
+            Logger.getLogger(FileTokenCacheUtils.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+
+    public static TokenModel getToken(String key, String folderTokens) {
+        try {
+            File fileToken = createFileToken(key, folderTokens);
+            if (fileToken.exists()) {
+                String jsonToken = FileUtils.readFileToString(fileToken, "UTF-8");
+                return JsonSimpleUtil.toObject(jsonToken, TokenModel.class);
             }
             return null;
         } catch (IOException ex) {
